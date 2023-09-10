@@ -683,11 +683,11 @@ def get_timescale_data(request, **kwargs):
     stationIdParams = int(stationIdParams)
 
     if stationIdParams != None and stationIdParams > 0:
-        data = Data.objects.filter(station_id=stationIdParams).order_by('-value')[0].__dict__
+        data = Data.objects.filter(station_id=stationIdParams).order_by('-values')[0].__dict__
         user = Station.objects.get(id=stationIdParams).user.__dict__
         role = Role.objects.get(id=user['role_id']).__dict__
         data_result = {
-            "max_value": data['value'],
+            "max_value": sorted(data['values'])[-1],
             "user": user['login'],
             "role": role['name'],
             "is_user_active": role['active']
