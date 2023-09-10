@@ -677,6 +677,26 @@ class RemaView(TemplateView):
 
         return context
 
+def get_timescale_data(request, **kwargs):
+    data_result = {}
+    stationIdParams = kwargs.get("stationId", None)
+    stationIdParams = int(stationIdParams)
+
+    if stationIdParams != None and stationIdParams > 0:
+        data = Data.objects.filter(station_id=stationIdParams).order_by('-value')[0].__dict__
+        user = Station.objects.get(id=stationIdParams).user.__dict__
+        role = Role.objects.get(id=user['role_id']).__dict__
+        data_result = {
+            "max_value": data['value'],
+            "user": user['login'],
+            "role": role['name'],
+            "is_user_active": role['active']
+        }
+    else:
+        data_result["error"] = "Inidique el id de la estación"
+    print(data_result)
+    return JsonResponse(data_result)
+
 
 def download_csv_data(request):
     print("Getting time for csv req")
